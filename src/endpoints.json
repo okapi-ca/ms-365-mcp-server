@@ -552,12 +552,15 @@
     "pathPattern": "/chats/{chat-id}/messages",
     "method": "get",
     "toolName": "list-chat-messages",
-    "workScopes": ["ChatMessage.Read"]
+    "scopes": ["Chat.Read"],
+    "workScopes": ["ChatMessage.Read"],
+    "llmTip": "Lists messages from a chat. To read a meeting chat, get the chat ID from the chatInfo.threadId property of the onlineMeeting object (via list-online-meetings). Returns messages with sender, timestamp, and content including links and files shared during the meeting."
   },
   {
     "pathPattern": "/chats/{chat-id}/messages/{chatMessage-id}",
     "method": "get",
     "toolName": "get-chat-message",
+    "scopes": ["Chat.Read"],
     "workScopes": ["ChatMessage.Read"]
   },
   {
