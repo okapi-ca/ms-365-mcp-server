@@ -960,6 +960,13 @@
     "workScopes": ["Team.ReadBasic.All"]
   },
   {
+    "pathPattern": "/teams/{team-id}",
+    "method": "patch",
+    "toolName": "update-team",
+    "workScopes": ["TeamSettings.ReadWrite.All"],
+    "llmTip": "Updates team properties. Body: { displayName: 'New Name', description: 'New description', memberSettings: { allowCreateUpdateChannels: true }, messagingSettings: { allowUserEditMessages: true }, funSettings: { allowGiphy: false } }."
+  },
+  {
     "pathPattern": "/teams/{team-id}/channels",
     "method": "get",
     "toolName": "list-team-channels",
@@ -970,6 +977,27 @@
     "method": "get",
     "toolName": "get-team-channel",
     "workScopes": ["Channel.ReadBasic.All"]
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels",
+    "method": "post",
+    "toolName": "create-team-channel",
+    "workScopes": ["Channel.Create"],
+    "llmTip": "Creates a new channel in a team. Body: { displayName: 'Channel Name', description: 'Optional description', membershipType: 'standard' }. membershipType: 'standard' (visible to all), 'private' (invited members only), 'shared' (cross-team)."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}",
+    "method": "patch",
+    "toolName": "update-team-channel",
+    "workScopes": ["Channel.ReadBasic.All"],
+    "llmTip": "Updates channel properties. Body: { displayName: 'New Name', description: 'New description' }. The General channel cannot be renamed."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}",
+    "method": "delete",
+    "toolName": "delete-team-channel",
+    "workScopes": ["Channel.Delete.All"],
+    "llmTip": "Deletes a channel and all its content (messages, files, tabs). The General channel cannot be deleted. This action cannot be undone."
   },
   {
     "pathPattern": "/teams/{team-id}/channels/{channel-id}/messages",
@@ -1008,6 +1036,34 @@
     "method": "get",
     "toolName": "list-team-members",
     "workScopes": ["TeamMember.Read.All"]
+  },
+  {
+    "pathPattern": "/teams/{team-id}/members",
+    "method": "post",
+    "toolName": "add-team-member",
+    "workScopes": ["TeamMember.ReadWrite.All"],
+    "llmTip": "Adds a member to a team. Body: { '@odata.type': '#microsoft.graph.aadUserConversationMember', 'user@odata.bind': 'https://graph.microsoft.com/v1.0/users/{user-id}', roles: [] }. Set roles to ['owner'] to add as owner, or [] for regular member."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/members/{membership-id}",
+    "method": "delete",
+    "toolName": "remove-team-member",
+    "workScopes": ["TeamMember.ReadWrite.All"],
+    "llmTip": "Removes a member from a team. Use list-team-members first to find the membership-id. Cannot remove the last owner."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/tabs",
+    "method": "get",
+    "toolName": "list-channel-tabs",
+    "workScopes": ["TeamsTab.Read.All"],
+    "llmTip": "Lists tabs pinned to a channel. Each tab has displayName, webUrl, teamsApp (id, displayName), and configuration."
+  },
+  {
+    "pathPattern": "/teams/{team-id}/channels/{channel-id}/filesFolder",
+    "method": "get",
+    "toolName": "get-channel-files-folder",
+    "workScopes": ["ChannelSettings.Read.All"],
+    "llmTip": "Gets the SharePoint driveItem (folder) that contains the files for a Teams channel. Returns id, name, webUrl, and parentReference with driveId. Use the driveId and id with OneDrive/SharePoint endpoints to browse channel files."
   },
   {
     "pathPattern": "/chats/{chat-id}/messages/{chatMessage-id}/replies",
@@ -1139,11 +1195,51 @@
     "llmTip": "List online meetings. Use $filter=joinWebUrl eq '{url}' to find a specific meeting by its Teams join link. Returns meeting IDs needed for transcript access."
   },
   {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
+    "method": "get",
+    "toolName": "get-online-meeting",
+    "scopes": ["OnlineMeetings.Read"],
+    "workScopes": ["OnlineMeetings.Read"],
+    "llmTip": "Gets a specific online meeting by ID. Returns full details including subject, startDateTime, endDateTime, joinWebUrl, chatInfo (threadId for meeting chat), participants (organizer, attendees), lobbyBypassSettings, and videoTeleconferenceId."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings",
+    "method": "post",
+    "toolName": "create-online-meeting",
+    "scopes": ["OnlineMeetings.ReadWrite"],
+    "workScopes": ["OnlineMeetings.ReadWrite"],
+    "llmTip": "Creates a new online meeting. Required body: { subject, startDateTime, endDateTime }. Optional: participants, lobbyBypassSettings, isEntryExitAnnounced, allowedPresenters (everyone/organization/roleIsPresenter/organizer). Returns the created meeting with joinWebUrl and meeting ID."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
+    "method": "patch",
+    "toolName": "update-online-meeting",
+    "scopes": ["OnlineMeetings.ReadWrite"],
+    "workScopes": ["OnlineMeetings.ReadWrite"],
+    "llmTip": "Updates an existing online meeting. Updatable properties: subject, startDateTime, endDateTime, participants, lobbyBypassSettings, isEntryExitAnnounced, allowedPresenters."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
+    "method": "delete",
+    "toolName": "delete-online-meeting",
+    "scopes": ["OnlineMeetings.ReadWrite"],
+    "workScopes": ["OnlineMeetings.ReadWrite"],
+    "llmTip": "Deletes an online meeting. This cannot be undone. The meeting join link will no longer work after deletion."
+  },
+  {
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts",
     "method": "get",
     "toolName": "list-meeting-transcripts",
     "workScopes": ["OnlineMeetingTranscript.Read.All"],
     "llmTip": "Lists available transcripts for a meeting. Get the meeting ID first via list-online-meetings."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts/{callTranscript-id}",
+    "method": "get",
+    "toolName": "get-meeting-transcript",
+    "scopes": ["OnlineMeetingTranscript.Read.All"],
+    "workScopes": ["OnlineMeetingTranscript.Read.All"],
+    "llmTip": "Gets metadata for a specific transcript: createdDateTime, contentCorrelationId (links transcript to its recording), meetingId, meetingOrganizer. For the actual transcript text, use get-meeting-transcript-content instead."
   },
   {
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts/{callTranscript-id}/content",
@@ -1159,6 +1255,13 @@
     "toolName": "list-meeting-recordings",
     "workScopes": ["OnlineMeetingRecording.Read.All"],
     "llmTip": "Lists recordings for a meeting. Each recording has createdDateTime, endDateTime, meetingOrganizer, contentCorrelationId (links to corresponding transcript). For recurring meetings, there is one recording per occurrence."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings/{callRecording-id}",
+    "method": "get",
+    "toolName": "get-meeting-recording",
+    "workScopes": ["OnlineMeetingRecording.Read.All"],
+    "llmTip": "Gets metadata for a specific recording: createdDateTime, endDateTime, contentCorrelationId (links recording to its transcript), meetingOrganizer, callId. For the actual video file, use get-meeting-recording-content instead."
   },
   {
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings/{callRecording-id}/content",
@@ -1209,5 +1312,68 @@
     "toolName": "reply-to-group-thread",
     "workScopes": ["Group.ReadWrite.All"],
     "llmTip": "Legacy — Microsoft recommends Teams channels instead of group threads."
+  },
+  {
+    "pathPattern": "/me/presence",
+    "method": "get",
+    "toolName": "get-my-presence",
+    "scopes": ["Presence.Read"],
+    "llmTip": "Gets the current user's presence status. Returns availability (Available, Busy, DoNotDisturb, BeRightBack, Away, Offline) and activity (InACall, InAMeeting, Presenting, OutOfOffice, etc.)."
+  },
+  {
+    "pathPattern": "/users/{user-id}/presence",
+    "method": "get",
+    "toolName": "get-user-presence",
+    "scopes": ["Presence.Read.All"],
+    "workScopes": ["Presence.Read.All"],
+    "llmTip": "Gets presence status for a specific user by their user ID or UPN (email). Returns availability and activity."
+  },
+  {
+    "pathPattern": "/communications/presences",
+    "method": "post",
+    "toolName": "get-presences-by-user-id",
+    "scopes": ["Presence.Read.All"],
+    "workScopes": ["Presence.Read.All"],
+    "llmTip": "Gets presence for multiple users in a single call. Body: { ids: ['user-id-1', 'user-id-2', ...] }. Maximum 650 user IDs per request."
+  },
+  {
+    "pathPattern": "/solutions/virtualEvents/webinars",
+    "method": "get",
+    "toolName": "list-virtual-event-webinars",
+    "scopes": ["VirtualEvent.Read"],
+    "workScopes": ["VirtualEvent.Read"],
+    "llmTip": "Lists all webinars created by the current user. Each webinar has displayName, startDateTime, endDateTime, audience (everyone/organization), registration info, and status."
+  },
+  {
+    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEvent-id}",
+    "method": "get",
+    "toolName": "get-virtual-event-webinar",
+    "scopes": ["VirtualEvent.Read"],
+    "workScopes": ["VirtualEvent.Read"],
+    "llmTip": "Gets a specific webinar with full details: displayName, description, startDateTime, endDateTime, audience, coOrganizers, presenters, registrationConfiguration, and status."
+  },
+  {
+    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEvent-id}/sessions",
+    "method": "get",
+    "toolName": "list-webinar-sessions",
+    "scopes": ["VirtualEvent.Read"],
+    "workScopes": ["VirtualEvent.Read"],
+    "llmTip": "Lists sessions for a webinar. Each session has startDateTime, endDateTime, joinWebUrl, subject, and is essentially an online meeting associated with the webinar."
+  },
+  {
+    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEvent-id}/registrations",
+    "method": "get",
+    "toolName": "list-webinar-registrations",
+    "scopes": ["VirtualEvent.Read"],
+    "workScopes": ["VirtualEvent.Read"],
+    "llmTip": "Lists registrations for a webinar. Each registration has registrationDateTime, status (registered/cancelled), firstName, lastName, email."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/root/search(q='{search-text}')",
+    "method": "get",
+    "toolName": "search-onedrive-files",
+    "scopes": ["Files.Read"],
+    "workScopes": ["Files.Read.All"],
+    "llmTip": "Searches for files in a drive by name or content. The search-text parameter searches file names, metadata, and file content. Returns matching driveItems with id, name, webUrl, size, lastModifiedDateTime. Use list-drives first to get the drive-id."
   }
 ]
