@@ -199,32 +199,32 @@
     "llmTip": "No request body needed — just call with the message ID. Draft must exist in Drafts folder."
   },
   {
-    "pathPattern": "/me/mailFolders/inbox/messageRules",
+    "pathPattern": "/me/mailFolders/{mailFolder-id}/messageRules",
     "method": "get",
     "toolName": "list-mail-rules",
     "scopes": ["MailboxSettings.Read"],
-    "llmTip": "Lists all inbox rules. Each rule has displayName, sequence, isEnabled, conditions (fromAddresses, subjectContains, etc.), actions (moveToFolder, forwardTo, delete, etc.), and exceptions."
+    "llmTip": "Lists all rules for a mail folder. Use the Inbox folder ID (get it from list-mail-folders) for inbox rules. Each rule has displayName, sequence, isEnabled, conditions (fromAddresses, subjectContains, etc.), actions (moveToFolder, forwardTo, delete, etc.), and exceptions."
   },
   {
-    "pathPattern": "/me/mailFolders/inbox/messageRules",
+    "pathPattern": "/me/mailFolders/{mailFolder-id}/messageRules",
     "method": "post",
     "toolName": "create-mail-rule",
     "scopes": ["MailboxSettings.ReadWrite"],
-    "llmTip": "Creates an inbox rule. Body: { displayName: 'Rule name', sequence: 1, isEnabled: true, conditions: { fromAddresses: [{ emailAddress: { address: 'user@example.com' } }] }, actions: { moveToFolder: 'folder-id' } }. Actions: moveToFolder, copyToFolder, forwardTo, forwardAsAttachmentTo, delete, markAsRead, markImportance, stopProcessingRules."
+    "llmTip": "Creates a mail rule for a folder. Use the Inbox folder ID for inbox rules. Body: { displayName: 'Rule name', sequence: 1, isEnabled: true, conditions: { fromAddresses: [{ emailAddress: { address: 'user@example.com' } }] }, actions: { moveToFolder: 'folder-id' } }. Actions: moveToFolder, copyToFolder, forwardTo, forwardAsAttachmentTo, delete, markAsRead, markImportance, stopProcessingRules."
   },
   {
-    "pathPattern": "/me/mailFolders/inbox/messageRules/{messageRule-id}",
+    "pathPattern": "/me/mailFolders/{mailFolder-id}/messageRules/{messageRule-id}",
     "method": "patch",
     "toolName": "update-mail-rule",
     "scopes": ["MailboxSettings.ReadWrite"],
-    "llmTip": "Updates an existing inbox rule. Send only the properties to change. Common use: { isEnabled: false } to disable a rule, or update conditions/actions."
+    "llmTip": "Updates an existing mail rule. Send only the properties to change. Common use: { isEnabled: false } to disable a rule, or update conditions/actions."
   },
   {
-    "pathPattern": "/me/mailFolders/inbox/messageRules/{messageRule-id}",
+    "pathPattern": "/me/mailFolders/{mailFolder-id}/messageRules/{messageRule-id}",
     "method": "delete",
     "toolName": "delete-mail-rule",
     "scopes": ["MailboxSettings.ReadWrite"],
-    "llmTip": "Deletes an inbox rule permanently."
+    "llmTip": "Deletes a mail rule permanently. Requires the mailFolder-id and messageRule-id."
   },
   {
     "pathPattern": "/me/events",
@@ -393,16 +393,17 @@
     "pathPattern": "/me/drive/root/delta",
     "method": "get",
     "toolName": "get-my-drive-delta",
+    "disabled": true,
     "scopes": ["Files.Read"],
-    "llmTip": "Tracks incremental changes to files and folders in the user's default OneDrive. First call returns all items plus a deltaLink. Subsequent calls with the deltaLink return only changes since last sync. Use $select=id,name,deleted,file,folder,parentReference,lastModifiedDateTime to limit response size."
+    "llmTip": "Disabled: path not in OpenAPI spec. Use get-drive-delta with the user's drive ID instead."
   },
   {
-    "pathPattern": "/drives/{drive-id}/root/delta",
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/delta()",
     "method": "get",
     "toolName": "get-drive-delta",
     "scopes": ["Files.Read"],
     "workScopes": ["Files.Read.All"],
-    "llmTip": "Tracks incremental changes to files and folders in a specific drive. First call returns all items plus a deltaLink. Subsequent calls with the deltaLink URL return only items that changed since. Useful for syncing file state without re-listing everything."
+    "llmTip": "Tracks incremental changes to files and folders under a specific item in a drive. Use the root folder's driveItem-id to track the whole drive. First call returns all items plus a deltaLink. Subsequent calls with the deltaLink return only changes since. Use get-drive-root-item to get the root driveItem-id."
   },
   {
     "pathPattern": "/drives/{drive-id}/root",
@@ -500,7 +501,7 @@
     "llmTip": "Lists version history of a file. Each version has id, lastModifiedDateTime, lastModifiedBy, and size. Use the version id with /versions/{id}/content to download a specific version."
   },
   {
-    "pathPattern": "/me/drive/sharedWithMe",
+    "pathPattern": "/drives/{drive-id}/sharedWithMe()",
     "method": "get",
     "toolName": "list-shared-with-me",
     "scopes": ["Files.Read"],
@@ -552,7 +553,7 @@
     "llmTip": "Lists all named tables in a workbook. Each table has id, name, showHeaders, showTotals, columns, and style. Use the table name or id with other table endpoints."
   },
   {
-    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}",
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{workbookTable-id}",
     "method": "get",
     "toolName": "get-excel-table",
     "isExcelOp": true,
@@ -560,7 +561,7 @@
     "llmTip": "Gets a specific table by name or ID. Returns table properties including columns, showHeaders, showTotals, and style."
   },
   {
-    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/rows",
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{workbookTable-id}/rows",
     "method": "get",
     "toolName": "list-excel-table-rows",
     "isExcelOp": true,
@@ -568,7 +569,7 @@
     "llmTip": "Lists all rows in a table. Each row has index and values (array of cell values). Use $top and $skip for pagination on large tables."
   },
   {
-    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{table-id}/rows",
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/tables/{workbookTable-id}/rows",
     "method": "post",
     "toolName": "add-excel-table-rows",
     "isExcelOp": true,
@@ -1045,7 +1046,7 @@
     "llmTip": "Adds a member to a team. Body: { '@odata.type': '#microsoft.graph.aadUserConversationMember', 'user@odata.bind': 'https://graph.microsoft.com/v1.0/users/{user-id}', roles: [] }. Set roles to ['owner'] to add as owner, or [] for regular member."
   },
   {
-    "pathPattern": "/teams/{team-id}/members/{membership-id}",
+    "pathPattern": "/teams/{team-id}/members/{conversationMember-id}",
     "method": "delete",
     "toolName": "remove-team-member",
     "workScopes": ["TeamMember.ReadWrite.All"],
@@ -1345,7 +1346,7 @@
     "llmTip": "Lists all webinars created by the current user. Each webinar has displayName, startDateTime, endDateTime, audience (everyone/organization), registration info, and status."
   },
   {
-    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEvent-id}",
+    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEventWebinar-id}",
     "method": "get",
     "toolName": "get-virtual-event-webinar",
     "scopes": ["VirtualEvent.Read"],
@@ -1353,7 +1354,7 @@
     "llmTip": "Gets a specific webinar with full details: displayName, description, startDateTime, endDateTime, audience, coOrganizers, presenters, registrationConfiguration, and status."
   },
   {
-    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEvent-id}/sessions",
+    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEventWebinar-id}/sessions",
     "method": "get",
     "toolName": "list-webinar-sessions",
     "scopes": ["VirtualEvent.Read"],
@@ -1361,7 +1362,7 @@
     "llmTip": "Lists sessions for a webinar. Each session has startDateTime, endDateTime, joinWebUrl, subject, and is essentially an online meeting associated with the webinar."
   },
   {
-    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEvent-id}/registrations",
+    "pathPattern": "/solutions/virtualEvents/webinars/{virtualEventWebinar-id}/registrations",
     "method": "get",
     "toolName": "list-webinar-registrations",
     "scopes": ["VirtualEvent.Read"],
@@ -1369,7 +1370,7 @@
     "llmTip": "Lists registrations for a webinar. Each registration has registrationDateTime, status (registered/cancelled), firstName, lastName, email."
   },
   {
-    "pathPattern": "/drives/{drive-id}/root/search(q='{search-text}')",
+    "pathPattern": "/drives/{drive-id}/search(q='{q}')",
     "method": "get",
     "toolName": "search-onedrive-files",
     "scopes": ["Files.Read"],
