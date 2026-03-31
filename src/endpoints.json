@@ -402,7 +402,6 @@
     "method": "get",
     "toolName": "get-drive-delta",
     "scopes": ["Files.Read"],
-    "workScopes": ["Files.Read.All"],
     "llmTip": "Tracks incremental changes to files and folders under a specific item in a drive. Use the root folder's driveItem-id to track the whole drive. First call returns all items plus a deltaLink. Subsequent calls with the deltaLink return only changes since. Use get-drive-root-item to get the root driveItem-id."
   },
   {
@@ -449,7 +448,6 @@
     "method": "get",
     "toolName": "get-drive-item",
     "scopes": ["Files.Read"],
-    "workScopes": ["Files.Read.All"],
     "llmTip": "Gets metadata for a file or folder: name, size, lastModifiedDateTime, createdBy, webUrl, file (mimeType, hashes), folder (childCount), parentReference. Does not return content — use download-onedrive-file-content for that."
   },
   {
@@ -457,7 +455,6 @@
     "method": "patch",
     "toolName": "update-drive-item",
     "scopes": ["Files.ReadWrite"],
-    "workScopes": ["Files.ReadWrite.All"],
     "llmTip": "Updates file or folder properties. Common uses: rename (set name property), move (change parentReference), update description. Body: { name: 'new-name.txt' } to rename."
   },
   {
@@ -465,7 +462,6 @@
     "method": "post",
     "toolName": "create-drive-folder",
     "scopes": ["Files.ReadWrite"],
-    "workScopes": ["Files.ReadWrite.All"],
     "llmTip": "Creates a new subfolder. Body: { name: 'New Folder', folder: {}, '@microsoft.graph.conflictBehavior': 'rename' }. The conflictBehavior can be 'fail', 'replace', or 'rename'. Use get-drive-root-item to start from the root."
   },
   {
@@ -473,7 +469,6 @@
     "method": "post",
     "toolName": "share-drive-item",
     "scopes": ["Files.ReadWrite"],
-    "workScopes": ["Files.ReadWrite.All"],
     "llmTip": "Shares a file or folder with specific users. Body: { recipients: [{ email: 'user@example.com' }], roles: ['read'], sendInvitation: true, message: 'Please review this file.' }. Roles: 'read', 'write', 'owner'. Set requireSignIn to true to require authentication."
   },
   {
@@ -481,7 +476,6 @@
     "method": "get",
     "toolName": "list-drive-item-permissions",
     "scopes": ["Files.Read"],
-    "workScopes": ["Files.Read.All"],
     "llmTip": "Lists all permissions (sharing links, direct access, inherited) on a file or folder. Each permission has roles, grantedTo (user), link (sharing URL), and inheritedFrom."
   },
   {
@@ -489,7 +483,6 @@
     "method": "delete",
     "toolName": "delete-drive-item-permission",
     "scopes": ["Files.ReadWrite"],
-    "workScopes": ["Files.ReadWrite.All"],
     "llmTip": "Removes a specific permission from a file or folder. Only permissions that are not inherited can be deleted. Use list-drive-item-permissions first to find the permission ID."
   },
   {
@@ -497,7 +490,6 @@
     "method": "get",
     "toolName": "list-drive-item-versions",
     "scopes": ["Files.Read"],
-    "workScopes": ["Files.Read.All"],
     "llmTip": "Lists version history of a file. Each version has id, lastModifiedDateTime, lastModifiedBy, and size. Use the version id with /versions/{id}/content to download a specific version."
   },
   {
@@ -505,7 +497,6 @@
     "method": "get",
     "toolName": "list-shared-with-me",
     "scopes": ["Files.Read"],
-    "workScopes": ["Files.Read.All"],
     "llmTip": "Lists files and folders that have been shared with the current user. Returns driveItems with remoteItem property containing the shared item details. Use $select to limit fields."
   },
   {
@@ -822,7 +813,6 @@
     "pathPattern": "/me/memberOf",
     "method": "get",
     "toolName": "list-my-memberships",
-    "scopes": ["User.Read"],
     "workScopes": ["Directory.Read.All"],
     "llmTip": "Lists all groups, directory roles, and administrative units the current user is a member of. Returns directoryObjects — use $filter=isof('microsoft.graph.group') to filter to groups only. Each group has displayName, mail, groupTypes, membershipRule."
   },
@@ -858,7 +848,6 @@
     "pathPattern": "/me/manager",
     "method": "get",
     "toolName": "get-my-manager",
-    "scopes": ["User.Read.All"],
     "workScopes": ["User.Read.All"],
     "llmTip": "Gets the current user's manager. Returns a directoryObject with displayName, mail, jobTitle, id. Use the id to chain further queries (e.g. get their direct reports or presence)."
   },
@@ -866,7 +855,6 @@
     "pathPattern": "/me/directReports",
     "method": "get",
     "toolName": "list-my-direct-reports",
-    "scopes": ["User.Read.All"],
     "workScopes": ["User.Read.All"],
     "llmTip": "Lists users who report directly to the current user. Returns directoryObjects with displayName, mail, jobTitle, id. Useful for building org charts or sending team-wide communications."
   },
@@ -874,7 +862,6 @@
     "pathPattern": "/users/{user-id}/manager",
     "method": "get",
     "toolName": "get-user-manager",
-    "scopes": ["User.Read.All"],
     "workScopes": ["User.Read.All"],
     "llmTip": "Gets the manager of a specific user by user ID or UPN (email). Returns a directoryObject with displayName, mail, jobTitle."
   },
@@ -882,7 +869,6 @@
     "pathPattern": "/users/{user-id}/directReports",
     "method": "get",
     "toolName": "list-user-direct-reports",
-    "scopes": ["User.Read.All"],
     "workScopes": ["User.Read.All"],
     "llmTip": "Lists users who report directly to a specific user. Use with get-user-manager to traverse the org hierarchy."
   },
@@ -898,7 +884,6 @@
     "pathPattern": "/users/{user-id}/photo/$value",
     "method": "get",
     "toolName": "get-user-profile-photo",
-    "scopes": ["User.Read.All"],
     "workScopes": ["User.Read.All"],
     "returnDownloadUrl": true,
     "llmTip": "Returns a specific user's profile photo as binary image data. Use the user ID or UPN (email)."
@@ -1199,7 +1184,6 @@
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
     "method": "get",
     "toolName": "get-online-meeting",
-    "scopes": ["OnlineMeetings.Read"],
     "workScopes": ["OnlineMeetings.Read"],
     "llmTip": "Gets a specific online meeting by ID. Returns full details including subject, startDateTime, endDateTime, joinWebUrl, chatInfo (threadId for meeting chat), participants (organizer, attendees), lobbyBypassSettings, and videoTeleconferenceId."
   },
@@ -1207,7 +1191,6 @@
     "pathPattern": "/me/onlineMeetings",
     "method": "post",
     "toolName": "create-online-meeting",
-    "scopes": ["OnlineMeetings.ReadWrite"],
     "workScopes": ["OnlineMeetings.ReadWrite"],
     "llmTip": "Creates a new online meeting. Required body: { subject, startDateTime, endDateTime }. Optional: participants, lobbyBypassSettings, isEntryExitAnnounced, allowedPresenters (everyone/organization/roleIsPresenter/organizer). Returns the created meeting with joinWebUrl and meeting ID."
   },
@@ -1215,7 +1198,6 @@
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
     "method": "patch",
     "toolName": "update-online-meeting",
-    "scopes": ["OnlineMeetings.ReadWrite"],
     "workScopes": ["OnlineMeetings.ReadWrite"],
     "llmTip": "Updates an existing online meeting. Updatable properties: subject, startDateTime, endDateTime, participants, lobbyBypassSettings, isEntryExitAnnounced, allowedPresenters."
   },
@@ -1223,7 +1205,6 @@
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
     "method": "delete",
     "toolName": "delete-online-meeting",
-    "scopes": ["OnlineMeetings.ReadWrite"],
     "workScopes": ["OnlineMeetings.ReadWrite"],
     "llmTip": "Deletes an online meeting. This cannot be undone. The meeting join link will no longer work after deletion."
   },
@@ -1238,7 +1219,6 @@
     "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts/{callTranscript-id}",
     "method": "get",
     "toolName": "get-meeting-transcript",
-    "scopes": ["OnlineMeetingTranscript.Read.All"],
     "workScopes": ["OnlineMeetingTranscript.Read.All"],
     "llmTip": "Gets metadata for a specific transcript: createdDateTime, contentCorrelationId (links transcript to its recording), meetingId, meetingOrganizer. For the actual transcript text, use get-meeting-transcript-content instead."
   },
@@ -1325,7 +1305,6 @@
     "pathPattern": "/users/{user-id}/presence",
     "method": "get",
     "toolName": "get-user-presence",
-    "scopes": ["Presence.Read.All"],
     "workScopes": ["Presence.Read.All"],
     "llmTip": "Gets presence status for a specific user by their user ID or UPN (email). Returns availability and activity."
   },
@@ -1333,7 +1312,6 @@
     "pathPattern": "/communications/presences",
     "method": "post",
     "toolName": "get-presences-by-user-id",
-    "scopes": ["Presence.Read.All"],
     "workScopes": ["Presence.Read.All"],
     "llmTip": "Gets presence for multiple users in a single call. Body: { ids: ['user-id-1', 'user-id-2', ...] }. Maximum 650 user IDs per request."
   },
@@ -1341,7 +1319,6 @@
     "pathPattern": "/solutions/virtualEvents/webinars",
     "method": "get",
     "toolName": "list-virtual-event-webinars",
-    "scopes": ["VirtualEvent.Read"],
     "workScopes": ["VirtualEvent.Read"],
     "llmTip": "Lists all webinars created by the current user. Each webinar has displayName, startDateTime, endDateTime, audience (everyone/organization), registration info, and status."
   },
@@ -1349,7 +1326,6 @@
     "pathPattern": "/solutions/virtualEvents/webinars/{virtualEventWebinar-id}",
     "method": "get",
     "toolName": "get-virtual-event-webinar",
-    "scopes": ["VirtualEvent.Read"],
     "workScopes": ["VirtualEvent.Read"],
     "llmTip": "Gets a specific webinar with full details: displayName, description, startDateTime, endDateTime, audience, coOrganizers, presenters, registrationConfiguration, and status."
   },
@@ -1357,7 +1333,6 @@
     "pathPattern": "/solutions/virtualEvents/webinars/{virtualEventWebinar-id}/sessions",
     "method": "get",
     "toolName": "list-webinar-sessions",
-    "scopes": ["VirtualEvent.Read"],
     "workScopes": ["VirtualEvent.Read"],
     "llmTip": "Lists sessions for a webinar. Each session has startDateTime, endDateTime, joinWebUrl, subject, and is essentially an online meeting associated with the webinar."
   },
@@ -1365,7 +1340,6 @@
     "pathPattern": "/solutions/virtualEvents/webinars/{virtualEventWebinar-id}/registrations",
     "method": "get",
     "toolName": "list-webinar-registrations",
-    "scopes": ["VirtualEvent.Read"],
     "workScopes": ["VirtualEvent.Read"],
     "llmTip": "Lists registrations for a webinar. Each registration has registrationDateTime, status (registered/cancelled), firstName, lastName, email."
   },
@@ -1374,7 +1348,6 @@
     "method": "get",
     "toolName": "search-onedrive-files",
     "scopes": ["Files.Read"],
-    "workScopes": ["Files.Read.All"],
     "llmTip": "Searches for files in a drive by name or content. The search-text parameter searches file names, metadata, and file content. Returns matching driveItems with id, name, webUrl, size, lastModifiedDateTime. Use list-drives first to get the drive-id."
   }
 ]
