@@ -34,6 +34,8 @@ param(
 
   [string]$Location = 'eastus',
   [string]$ContainerImage = 'ghcr.io/softeria/ms-365-mcp-server:latest',
+  [string]$AcrResourceId = '',
+  [string]$AcrLoginServer = '',
   [ValidateSet('global', 'gcc-high', 'dod', 'china')]
   [string]$CloudType = 'global',
   [string]$CorsOrigin = 'http://localhost:3000',
@@ -110,6 +112,8 @@ $params = @{
   mcpClientSecret = @{ value = $secretPlain }
   cloudType      = @{ value = $CloudType }
   containerImage = @{ value = $ContainerImage }
+  acrResourceId  = @{ value = $AcrResourceId }
+  acrLoginServer = @{ value = $AcrLoginServer }
   corsOrigin     = @{ value = $CorsOrigin }
   publicBaseUrl  = @{ value = $PublicBaseUrl }
   orgMode        = @{ value = $OrgMode }

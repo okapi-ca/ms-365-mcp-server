@@ -1,0 +1,56 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build output (regenerated in container)
+dist
+src/generated/client.ts
+*.tsbuildinfo
+
+# Claude / Serena tooling
+.claude
+.serena
+CLAUDE.md
+DEPLOY.md
+
+# Editor / OS
+.idea
+.vscode
+.vscode-test
+.DS_Store
+
+# Env / secrets
+.env
+.env.*
+.token-cache.json
+.selected-account.json
+.mcp.json
+
+# Logs
+logs
+*.log
+
+# Test / coverage
+coverage
+.nyc_output
+test
+*.test.ts
+
+# CI
+.github
+
+# Docs (not needed at runtime)
+docs
+examples
+README.md
+CONTRIBUTING.md
+CHANGELOG.md
+LICENSE

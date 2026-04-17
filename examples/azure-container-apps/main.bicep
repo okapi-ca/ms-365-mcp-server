@@ -21,6 +21,12 @@ param location string = resourceGroup().location
 @description('Container image reference (public image by default).')
 param containerImage string = 'ghcr.io/softeria/ms-365-mcp-server:latest'
 
+@description('Full resource ID of an ACR to pull the image from (private registry). Leave empty for public images like ghcr.io.')
+param acrResourceId string = ''
+
+@description('ACR login server (e.g. myregistry.azurecr.io). Required when acrResourceId is set.')
+param acrLoginServer string = ''
+
 @description('Entra ID tenant ID (GUID).')
 param tenantId string
 
@@ -164,6 +170,19 @@ resource roleAdmins 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for 
   }
 }]
 
+// ---------- Optional: grant UAMI AcrPull on a private ACR (cross-RG via module) ----------
+var acrRgName = empty(acrResourceId) ? '' : split(acrResourceId, '/')[4]
+var acrNameParsed = empty(acrResourceId) ? '' : last(split(acrResourceId, '/'))
+
+module acrRoleAssignment 'acr-role.bicep' = if (!empty(acrResourceId)) {
+  name: 'acr-pull-role-assignment'
+  scope: resourceGroup(acrRgName)
+  params: {
+    acrName: acrNameParsed
+    principalId: uami.properties.principalId
+  }
+}
+
 // ---------- Container Apps Environment ----------
 resource cae 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: caeName
@@ -207,6 +226,12 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
         allowInsecure: false
         traffic: [ { latestRevision: true, weight: 100 } ]
       }
+      registries: empty(acrLoginServer) ? [] : [
+        {
+          server: acrLoginServer
+          identity: uami.id
+        }
+      ]
     }
     template: {
       containers: [
@@ -239,7 +264,7 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
       }
     }
   }
-  dependsOn: [ roleUami, secretClientId, secretTenantId, secretCloudType ]
+  dependsOn: [ roleUami, secretClientId, secretTenantId, secretCloudType, acrRoleAssignment ]
 }
 
 // ---------- Outputs ----------
