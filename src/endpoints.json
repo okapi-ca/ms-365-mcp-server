@@ -1519,5 +1519,27 @@
     "toolName": "create-outlook-category",
     "scopes": ["MailboxSettings.ReadWrite"],
     "llmTip": "Creates a new Outlook category. Body: { displayName (unique), color (one of: none, preset0 … preset24 — maps to red, orange, yellow, green, teal, olive, blue, purple, cranberry, steel, dark-steel, gray, dark-gray, black, dark-red, dark-orange, dark-yellow, dark-green, dark-teal, dark-olive, dark-blue, dark-purple, dark-cranberry) }. Category names are case-sensitive when applied to messages/events."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/copy",
+    "method": "post",
+    "toolName": "copy-drive-item",
+    "scopes": ["Files.ReadWrite"],
+    "llmTip": "Asynchronously copies a file or folder to a new location. Body: { name (optional new name), parentReference: { driveId, id }, childrenOnly (optional, folder-only: copy children only, keep existing folder), includeAllVersionHistory (optional) }. Returns 202 Accepted with a Location header pointing to a monitor URL (poll for status). For same-drive copies within OneDrive, omit parentReference.driveId. Use list-drives + get-drive-item to discover target IDs."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/preview",
+    "method": "post",
+    "toolName": "get-drive-item-preview",
+    "scopes": ["Files.Read"],
+    "readOnly": true,
+    "llmTip": "Returns short-lived embeddable URLs (getUrl, postUrl, postParameters) to preview the file in a browser iframe. Body (optional): { viewer ('onedrive' or 'office'), chromeless (boolean, hide viewer chrome), allowEdit (boolean), page (number or string for specific page/slide), zoom (number) }. Default body is {} for auto-settings. URLs expire within minutes. Useful to render a file inline without downloading."
+  },
+  {
+    "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/thumbnails",
+    "method": "get",
+    "toolName": "list-drive-item-thumbnails",
+    "scopes": ["Files.Read"],
+    "llmTip": "Lists thumbnail sets for a file. Each set contains small (96px), medium (176px), large (800px) thumbnails with url and dimensions. Returns empty for unsupported types (text docs). Use $select=small,medium,large or $expand=small($select=url) to fetch specific sizes. The returned URLs are short-lived — fetch the bytes immediately."
   }
 ]
