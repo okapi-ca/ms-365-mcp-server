@@ -1541,5 +1541,12 @@
     "toolName": "list-drive-item-thumbnails",
     "scopes": ["Files.Read"],
     "llmTip": "Lists thumbnail sets for a file. Each set contains small (96px), medium (176px), large (800px) thumbnails with url and dimensions. Returns empty for unsupported types (text docs). Use $select=small,medium,large or $expand=small($select=url) to fetch specific sizes. The returned URLs are short-lived — fetch the bytes immediately."
+  },
+  {
+    "pathPattern": "/chats",
+    "method": "post",
+    "toolName": "create-chat",
+    "workScopes": ["Chat.Create", "Chat.ReadWrite"],
+    "llmTip": "Creates a new 1:1 or group Teams chat. Body: { chatType ('oneOnOne' or 'group'), topic (optional, group only), members: [{ '@odata.type': '#microsoft.graph.aadUserConversationMember', roles: ['owner' | 'guest'], 'user@odata.bind': 'https://graph.microsoft.com/v1.0/users({id})' }] }. A oneOnOne chat requires exactly 2 members (self + other), both with role 'owner'. For group chats, include all participants. The signed-in user must be one of the members. Returns the created chat with its id — use that id with send-chat-message, list-chat-members, etc."
   }
 ]
