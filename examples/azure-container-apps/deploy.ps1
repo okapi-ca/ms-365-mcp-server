@@ -45,6 +45,7 @@ param(
   [bool]$ReadOnly = $false,
   [int]$MinReplicas = 0,
   [int]$MaxReplicas = 3,
+  [hashtable]$Tags = @{},
   [switch]$SkipLogin,
   [switch]$WhatIf
 )
@@ -121,6 +122,9 @@ $params = @{
   minReplicas    = @{ value = $MinReplicas }
   maxReplicas    = @{ value = $MaxReplicas }
   kvAdminObjectIds = @{ value = $KvAdminObjectIds }
+}
+if ($Tags.Count -gt 0) {
+  $params['tags'] = @{ value = $Tags }
 }
 $paramsFile = New-TemporaryFile
 try {
