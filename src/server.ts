@@ -278,14 +278,18 @@ class MicrosoftGraphServer {
         const state = url.searchParams.get('state');
 
         // Forward parameters that Microsoft OAuth 2.0 v2.0 supports,
-        // but NOT code_challenge/code_challenge_method — we generate our own for Microsoft
+        // but NOT code_challenge/code_challenge_method — we generate our own for Microsoft.
+        // We also strip 'prompt' because MCP clients (Claude) send prompt=consent,
+        // which forces a consent prompt on every sign-in. In tenants where user
+        // consent is restricted by policy, that produces a dead-end "Admin approval
+        // required" page even when admin has pre-consented every scope. Dropping
+        // 'prompt' lets Entra use its default behavior (silent when already consented).
         const allowedParams = [
           'response_type',
           'redirect_uri',
           'scope',
           'state',
           'response_mode',
-          'prompt',
           'login_hint',
           'domain_hint',
         ];
