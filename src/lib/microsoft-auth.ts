@@ -104,11 +104,26 @@ export async function exchangeCodeForToken(
     params.append('code_verifier', codeVerifier);
   }
 
+  // When the app registration has the redirect_uri registered as a
+  // Single-Page Application (SPA), Entra requires the /token request to
+  // include an Origin header matching the redirect_uri's origin — otherwise
+  // it returns AADSTS9002327 ("Tokens issued for the 'Single-Page Application'
+  // client-type may only be redeemed via cross-origin requests"). SPA redirects
+  // are the only way to get PKCE-without-secret from a confidential-tenant
+  // app registration, so we emulate the cross-origin call here.
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+  try {
+    const redirectUrl = new URL(redirectUri);
+    headers['Origin'] = redirectUrl.origin;
+  } catch {
+    // redirect_uri is not a valid URL — omit Origin and let Entra decide
+  }
+
   const response = await fetch(`${cloudEndpoints.authority}/${tenantId}/oauth2/v2.0/token`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+    headers,
     body: params,
   });
 
