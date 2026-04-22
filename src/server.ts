@@ -364,8 +364,11 @@ class MicrosoftGraphServer {
             'User.Read Files.Read Mail.Read offline_access'
           );
         } else {
-          // Always include offline_access so Entra ID issues a refresh token,
-          // enabling silent token refresh once the access token expires.
+          // Inject offline_access silently here (not advertised in scopes_supported)
+          // so Entra ID issues a refresh token, enabling silent token refresh after
+          // the access token expires. Advertising the scope in OAuth metadata made
+          // MCP clients request it explicitly, which triggers a "Maintain access to
+          // data" consent line that fails in tenants with restricted user consent.
           const scopeValue = microsoftAuthUrl.searchParams.get('scope')!;
           const scopeList = scopeValue.split(/\s+/).filter(Boolean);
           if (!scopeList.includes('offline_access')) {
