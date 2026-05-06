@@ -2030,5 +2030,19 @@
     "toolName": "create-contact-in-folder",
     "scopes": ["Contacts.ReadWrite"],
     "llmTip": "Creates a contact inside a specific folder (instead of the default Contacts folder). Body is a contact resource: { givenName, surname, displayName, emailAddresses: [{ address, name }], businessPhones: [], mobilePhone, jobTitle, companyName, ... }. The existing create-outlook-contact (POST /me/contacts) writes to the default folder only; use this when organizing contacts into named folders. Get the folder id via list-contact-folders."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}/childFolders",
+    "method": "get",
+    "toolName": "list-contact-folder-child-folders",
+    "scopes": ["Contacts.Read"],
+    "llmTip": "Lists immediate sub-folders under a given contact folder. Returns id, displayName, parentFolderId. Use list-contact-folders to discover top-level folders, then this tool to traverse one level deeper. Supports $filter, $top, $orderby. Note: contact folders are typically a flat list in Outlook clients, but Graph allows nesting via this endpoint."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}/childFolders",
+    "method": "post",
+    "toolName": "create-contact-child-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "llmTip": "Creates a sub-folder under an existing contact folder. Body: { displayName: 'Sub-folder name' }. Names must be unique among siblings under the same parent. Use list-contact-folders to discover the parent id. The returned contactFolder has its own id usable with update-contact-folder, delete-contact-folder, list-contact-folder-contacts, and create-contact-in-folder — contactFolder ids are mailbox-unique regardless of nesting depth."
   }
 ]
