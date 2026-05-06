@@ -1988,5 +1988,47 @@
     "toolName": "delete-todo-task-list",
     "scopes": ["Tasks.ReadWrite"],
     "llmTip": "Deletes a Microsoft To Do task list and ALL of its tasks (cascades). Built-in lists cannot be deleted — the API returns an error for those. Get list ids via list-todo-task-lists. Operation is irreversible."
+  },
+  {
+    "pathPattern": "/me/contactFolders",
+    "method": "get",
+    "toolName": "list-contact-folders",
+    "scopes": ["Contacts.Read"],
+    "llmTip": "Lists the user's Outlook contact folders (the named buckets that organize contacts). Always includes the built-in 'Contacts' folder; user-created folders also appear. Returns id, displayName, parentFolderId, and wellKnownName ('contacts' for the default). Use this before list-contact-folder-contacts or create-contact-in-folder to discover folder ids. Supports $filter, $top, $orderby."
+  },
+  {
+    "pathPattern": "/me/contactFolders",
+    "method": "post",
+    "toolName": "create-contact-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "llmTip": "Creates a new contact folder under the user's mailbox root. Body: { displayName: 'Family' }. Returns the created contactFolder with its id. Folder names must be unique among siblings. To create a sub-folder, POST to /me/contactFolders/{parent-id}/childFolders instead — not currently exposed."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}",
+    "method": "patch",
+    "toolName": "update-contact-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "llmTip": "Renames a contact folder. Body: { displayName: 'New name' }. Only displayName is writable. The default 'Contacts' folder cannot be renamed — Graph returns an error. Get the folder id via list-contact-folders."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}",
+    "method": "delete",
+    "toolName": "delete-contact-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "llmTip": "Deletes a contact folder and ALL contacts in it (cascades). The default 'Contacts' folder cannot be deleted — Graph returns an error. Get the folder id via list-contact-folders. Operation is irreversible."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}/contacts",
+    "method": "get",
+    "toolName": "list-contact-folder-contacts",
+    "scopes": ["Contacts.Read"],
+    "llmTip": "Lists contacts inside a specific folder. Pair with list-contact-folders to discover the folder id. Note: the existing list-outlook-contacts (GET /me/contacts) only returns contacts from the default folder — use this tool to read contacts from any folder. Supports $filter, $search='query', $orderby, $top, $select."
+  },
+  {
+    "pathPattern": "/me/contactFolders/{contactFolder-id}/contacts",
+    "method": "post",
+    "toolName": "create-contact-in-folder",
+    "scopes": ["Contacts.ReadWrite"],
+    "llmTip": "Creates a contact inside a specific folder (instead of the default Contacts folder). Body is a contact resource: { givenName, surname, displayName, emailAddresses: [{ address, name }], businessPhones: [], mobilePhone, jobTitle, companyName, ... }. The existing create-outlook-contact (POST /me/contacts) writes to the default folder only; use this when organizing contacts into named folders. Get the folder id via list-contact-folders."
   }
 ]
