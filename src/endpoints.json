@@ -1937,5 +1937,27 @@
     "workScopes": ["TeamsActivity.Send"],
     "contentType": "application/json",
     "llmTip": "Sends a Teams activity feed notification to the current user (the badge + entry in their Activity tab). Body: { topic: { source: 'entityUrl' | 'text', value: <Graph URL or plain text>, webUrl?: <click-through URL when source=text> }, activityType: <one of the activity types declared in the calling app's Teams manifest>, previewText: { content: 'short preview' }, templateParameters?: [{ name, value }] (substituted into the manifest's localized notification template), teamsAppId?: <required when caller is not a Teams app — fetch via list-my-installed-teams-apps>, chainId?, iconId? }. Use to ping the user with 'action required' notifications from agentic workflows. activityType must exist in the Teams app manifest — see https://learn.microsoft.com/graph/teams-send-activityfeednotifications."
+  },
+  {
+    "pathPattern": "/me/onenote/pages",
+    "method": "get",
+    "toolName": "list-onenote-pages",
+    "scopes": ["Notes.Read"],
+    "llmTip": "Lists all OneNote pages across every notebook and section the user has access to — transverse alternative to walking notebooks → sections → pages. Default returns top 20 ordered by lastModifiedTime desc. Supports $search='query' for full-text search across page titles and bodies, $filter (e.g. lastModifiedTime gt 2026-01-01), $top (max 100), $select, and $expand=parentNotebook,parentSection. Use $search before bouncing through list-onenote-notebooks / list-all-onenote-sections / list-onenote-section-pages when you only have a topic in mind."
+  },
+  {
+    "pathPattern": "/me/onenote/sectionGroups",
+    "method": "get",
+    "toolName": "list-onenote-section-groups",
+    "scopes": ["Notes.Read"],
+    "llmTip": "Lists all OneNote section groups (subfolders inside notebooks that contain their own sections and nested section groups) for the user. A section group is a folder-like container — many notebooks use them to organize sections by theme. Default sort is name asc. Supports $expand=sections,sectionGroups,parentNotebook,parentSectionGroup to traverse the full hierarchy. Pair with list-onenote-notebooks for a complete picture of the user's notebook structure."
+  },
+  {
+    "pathPattern": "/me/onenote/notebooks/getNotebookFromWebUrl",
+    "method": "post",
+    "toolName": "get-onenote-notebook-from-web-url",
+    "workScopes": ["Notes.Read"],
+    "contentType": "application/json",
+    "llmTip": "Resolves a OneNote notebook from its web URL (the link a user copies from OneNote / SharePoint / Teams). Body: { webUrl: 'https://...' }. Returns a CopyNotebookModel with the notebook's id, displayName, sectionsUrl, sectionGroupsUrl, and isShared — you can then list its sections via list-onenote-notebook-sections. Accepts user notebooks, group notebooks, and SharePoint-hosted team notebooks. Personal Microsoft accounts are not supported."
   }
 ]
